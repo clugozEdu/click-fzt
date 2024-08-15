@@ -1,0 +1,39 @@
+.swal2-popup.swal2-modal {
+  border-radius: 30px;
+}
+
+.swal2-container {
+  z-index: 9999;
+}
+
+.MuiButtonBase-root.MuiChip-root {
+  color: white;
+  background-color: #0d1f2d;
+}
+
+.MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiChip-deleteIcon {
+  color: white;
+}
+
+/* transitionStyles.css */
+/* .btn-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.btn-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+.btn-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.btn-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+} */
