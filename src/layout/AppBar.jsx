@@ -78,7 +78,7 @@ const AppBarSite = ({ advisor, spacings, loading }) => {
             </IconButton>
           )}
           <img
-            src="/src/assets/logo.png"
+            src="/public/assets/logo.png"
             alt="Logo"
             style={{ height: "50px" }}
           />

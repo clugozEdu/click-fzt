@@ -150,7 +150,11 @@ const AuthForm = ({ type }) => {
         }}
       >
         <CssBaseline />
-        <img src="src/assets/Logo.png" alt="Logo" style={{ height: "100px" }} />
+        <img
+          src="/public/assets/logo.png"
+          alt="Logo"
+          style={{ height: "100px" }}
+        />
         <Typography component="h1" variant="h5" sx={{ marginTop: 2 }}>
           {type === "login" ? "Inicio de Sesión" : "Crear una cuenta"}
         </Typography>
