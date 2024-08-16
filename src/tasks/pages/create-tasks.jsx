@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import useUser from "../../context/UseUser";
+import useUser from "../../context/users";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -14,8 +14,8 @@ import {
   ListItem,
   AlertTitle,
 } from "@mui/material";
-import ControlledDatePicker from "../../layout/components/date-range-picker";
-import ControlledTimePicker from "../../layout/components/time-range-picker";
+import ControlledDatePicker from "../../layout/components/date-picker";
+import ControlledTimePicker from "../../layout/components/time-picker";
 import { fetchSupabaseDB, handlerInsertSupabase } from "../../supabaseServices";
 
 const CreateTask = ({ idStatus, idList, setIsDialogOpen }) => {

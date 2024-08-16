@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import ErrorPage from "./ErrorPage";
+import ErrorPage from "./error-page";
 import App from "../App";
-import Login from "../auth/Login";
-import SignUp from "../auth/Signup";
-import RequireAuth from "../auth/RequiredAuth";
-import TaskPage from "../tasks/Task";
-import SpacingPage from "../tasks/Spacing";
+import Login from "../auth/components/login-page";
+import SignUp from "../auth/components/signup-page";
+import RequireAuth from "../auth/auth-provider";
+import TaskPage from "../tasks/pages/task-page";
+import SpacingPage from "../tasks/pages/spacing-page";
 
 const router = createBrowserRouter([
   {

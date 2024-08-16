@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountMenu from "../layout/AccountMenu";
-import CreateSpacingForm from "../tasks/forms/create-spacing";
-import CreateListForm from "../tasks/forms/create-lists";
-import ConfirmDelete from "../tasks/forms/deleted-component"; // Import the ConfirmDelete component
-import LinearIndeterminate from "./components/linear-progress";
-import CreateDialog from "./components/create-dialog";
-import ListSideBar from "./components/ListSideBar";
+import AccountMenu from "./account-menu";
+import CreateSpacingForm from "../../tasks/pages/create-spacing";
+import CreateListForm from "../../tasks/pages/create-lists";
+import ConfirmDelete from "../../tasks/components/deleted-component"; // Import the ConfirmDelete component
+import LinearIndeterminate from "./linear-progress";
+import CreateDialog from "./create-dialog";
+import ListSideBar from "./list-side-bar";
 
 const AppBarSite = ({ advisor, spacings, loading }) => {
   const [mobileOpen, setMobileOpen] = useState(false);

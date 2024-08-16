@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useUser from "../context/UseUser";
-import { fetchSpacingAll, fetchSupabaseDB } from "../supabaseServices";
-import TaskList from "./components/TaskList";
-import { Skeleton } from "@mui/material";
+import useUser from "../../context/users";
+import { fetchSpacingAll, fetchSupabaseDB } from "../../supabaseServices";
+import TaskList from "../components/lists-tasks";
+import useLoading from "../../context/loading";
 
 const SpacingPage = () => {
+  const { setIsLoading } = useLoading();
   const { spacingId } = useParams();
   const { advisorLogin } = useUser();
   const [tasks, setTasks] = useState([]);
@@ -13,6 +14,7 @@ const SpacingPage = () => {
   const [filterTask, setFilterTask] = useState([]);
 
   useEffect(() => {
+    setIsLoading(true);
     async function fetchData() {
       const taskPromise = fetchSpacingAll(advisorLogin.sub);
       const usersPromise = fetchSupabaseDB("table_users", "");
@@ -27,23 +29,22 @@ const SpacingPage = () => {
     if (advisorLogin.sub) {
       fetchData();
     }
-  }, [advisorLogin.sub, spacingId]);
+  }, [advisorLogin.sub, spacingId, setIsLoading]);
 
   useEffect(() => {
     if (tasks.length > 0) {
+      setIsLoading(true);
       setFilterTask(tasks.filter((task) => task.id == spacingId));
+      setIsLoading(false);
     }
-  }, [tasks, spacingId]);
+  }, [tasks, spacingId, setIsLoading]);
 
   return (
     <div>
-      {filterTask.length > 0 ? (
+      {filterTask.length > 0 &&
         filterTask.map((item, index) => (
           <TaskList key={index} lists={item.lists} users={users} />
-        ))
-      ) : (
-        <Skeleton />
-      )}
+        ))}
     </div>
   );
 };

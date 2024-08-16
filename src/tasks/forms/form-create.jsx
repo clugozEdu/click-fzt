@@ -7,7 +7,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import useUser from "../../context/UseUser";
+import useUser from "../../context/users";
 import PropTypes from "prop-types";
 import { fetchSupabaseDB, handlerInsertSupabase } from "../../supabaseServices";
 

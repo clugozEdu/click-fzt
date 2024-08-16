@@ -1,9 +1,9 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import router from "./routes/Routes";
+import router from "./routes/routes";
 import { RouterProvider } from "react-router-dom";
-import { UserProvider } from "./context/UserContext";
-import { LoadingProvider } from "./context/use-loading-context";
+import { UserProvider } from "./context/hooks/use-users-context";
+import { LoadingProvider } from "./context/hooks/use-loading-context";
 
 const container = document.getElementById("root");
 const root = createRoot(container);

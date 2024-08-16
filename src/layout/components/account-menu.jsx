@@ -11,9 +11,9 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { stringAvatar } from "../utils/utilities";
+import { stringAvatar } from "../../utils/utilities";
 import Logout from "@mui/icons-material/Logout";
-import supabase from "../supabaseClient";
+import supabase from "../../supabaseClient";
 
 const AccountMenu = ({ userName }) => {
   const [anchorEl, setAnchorEl] = useState(null);

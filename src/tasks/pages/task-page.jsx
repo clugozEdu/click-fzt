@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Grid, Box, IconButton, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import TaskCard from "./components/TaskCard";
-import useUser from "../context/UseUser";
-import { fetchTasksForList, fetchSupabaseDB } from "../supabaseServices";
-import { backStatusColor, getColorsScheme } from "../utils/utilities";
-import NavLinksBreadcrumbs from "../layout/components/Breadcrumb";
-import CreateDialog from "../layout/components/create-dialog";
-import SnackbarCustom from "../layout/components/SnackbarCustom";
-import CreateTask from "./forms/create-tasks";
-import supabase from "../supabaseClient";
-import useLoading from "../context/loading";
+import TaskCard from "../components/card-tasks";
+import useUser from "../../context/users";
+import { fetchTasksForList, fetchSupabaseDB } from "../../supabaseServices";
+import { backStatusColor, getColorsScheme } from "../../utils/utilities";
+import NavLinksBreadcrumbs from "../../layout/components/breadcrumbs";
+import CreateDialog from "../../layout/components/create-dialog";
+import SnackbarCustom from "../../layout/components/snackbar";
+import CreateTask from "./create-tasks";
+import supabase from "../../supabaseClient";
+import useLoading from "../../context/loading";
 
 const TaskPage = () => {
   const { advisorLogin } = useUser();

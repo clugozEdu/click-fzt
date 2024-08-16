@@ -96,6 +96,8 @@ export const fetchSpacingAll = async (userID) => {
     return { data: null, error: spacingError };
   }
 
+  console.log(spacings);
+
   // Filter data according to the user's role (responsible or not) and list is_active status
   const filteredData = spacings
     .map((spacing) => {
@@ -116,12 +118,7 @@ export const fetchSpacingAll = async (userID) => {
         });
       }
 
-      // Only include spacings that have lists or tasks visible to the user
-      if (spacing.lists.length > 0) {
-        return spacing;
-      }
-
-      return null;
+      return spacing;
     })
     .filter(Boolean); // Remove any null spacings
 
@@ -132,7 +129,7 @@ export const fetchTasksForList = async (listID, userID) => {
   // Paso 1: Obtener la información del espacio relacionado con la lista
   const { data: spacingInfo, error: spacingError } = await supabase
     .from("table_lists")
-    .select("user_responsible_id")
+    .select("user_responsible_id, spacing_id")
     .eq("id", listID); // Filtrar por el ID de la lista
 
   if (spacingError) {
@@ -140,12 +137,35 @@ export const fetchTasksForList = async (listID, userID) => {
     return { data: null, error: spacingError };
   }
 
-  // Paso 2: Determinar si el usuario es responsable de alguna de las entradas
-  const isResponsible = spacingInfo.some(
-    (spacing) => spacing.user_responsible_id === userID
-  );
+  if (spacingInfo.length === 0) {
+    console.error("No spacing info found for the given list ID");
+    return { data: null, error: "No spacing info found" };
+  }
 
-  // Paso 3: Construir la consulta de tareas basada en la responsabilidad del usuario
+  const { spacing_id, user_responsible_id } = spacingInfo[0];
+
+  // Paso 2: Obtener la información del espacio para verificar si el usuario es el dueño del espacio
+  const { data: spaceInfo, error: spaceError } = await supabase
+    .from("table_spacing")
+    .select("user_responsible_id")
+    .eq("id", spacing_id);
+
+  if (spaceError) {
+    console.error("Error fetching space info:", spaceError);
+    return { data: null, error: spaceError };
+  }
+
+  if (spaceInfo.length === 0) {
+    console.error("No space info found for the given spacing ID");
+    return { data: null, error: "No space info found" };
+  }
+
+  const isOwnerOfSpace = spaceInfo[0].user_responsible_id === userID;
+
+  // Paso 3: Determinar si el usuario es responsable de la lista o dueño del espacio
+  const isResponsible = user_responsible_id === userID || isOwnerOfSpace;
+
+  // Paso 4: Construir la consulta de tareas basada en la responsabilidad del usuario
   const taskQuery = supabase
     .from("table_tasks")
     .select(

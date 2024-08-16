@@ -1,4 +1,4 @@
-import AuthForm from "./components/AuthForm";
+import AuthForm from "./form-authentication";
 
 const Login = () => {
   return <AuthForm type="login" />;

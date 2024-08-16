@@ -23,8 +23,8 @@ import {
 import ListIcon from "@mui/icons-material/List";
 import PropTypes from "prop-types";
 import { Link, Navigate } from "react-router-dom";
-import useUser from "../../context/UseUser";
-import ConfirmDelete from "../../tasks/forms/deleted-component";
+import useUser from "../../context/users";
+import ConfirmDelete from "../../tasks/components/deleted-component";
 
 const ListSideBar = ({
   spacings,

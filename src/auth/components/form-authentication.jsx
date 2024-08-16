@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SnackbarCustom from "../../layout/components/SnackbarCustom";
+import SnackbarCustom from "../../layout/components/snackbar";
 import supabase from "../../supabaseClient";
 import { handlerInsertSupabase, fetchSupabaseDB } from "../../supabaseServices";
 import bcrypt from "bcryptjs";

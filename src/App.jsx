@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { CssBaseline } from "@mui/material";
-import AppBarSite from "./layout/AppBar";
+import AppBarSite from "./layout/components/app-bar";
 import { fetchSpacingAll } from "./supabaseServices";
-import useUser from "./context/UseUser";
+import useUser from "./context/users";
 import supabase from "./supabaseClient"; // Asegúrate de que la ruta de importación es correcta
 import useLoading from "./context/loading";
 

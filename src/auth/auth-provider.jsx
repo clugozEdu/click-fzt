@@ -35,7 +35,14 @@ function RequireAuth({ children }) {
     return <div>Loading...</div>;
   }
 
-  if (!session) {
+  // Verificar si el token ha expirado
+  const isTokenExpired = () => {
+    if (!session) return true;
+    const currentTime = Math.floor(Date.now() / 1000);
+    return session.expires_at < currentTime;
+  };
+
+  if (!session || isTokenExpired()) {
     return <Navigate to="/login" replace />;
   }
 
