@@ -27,6 +27,7 @@ const FormCreate = ({
     user_responsible_id: advisorLogin.sub,
     users_id: [advisorLogin.sub],
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -64,6 +65,17 @@ const FormCreate = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const newErrors = {};
+
+    if (!dataPost[keyName]) {
+      newErrors[keyName] = "El nombre del espacio no puede estar en blanco";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     handlerInsertSupabase(nameTablePost, dataPost);
     setOpenDialog(false);
   };
@@ -82,6 +94,8 @@ const FormCreate = ({
           name={keyName}
           value={dataPost[keyName]}
           onChange={handleInputChange}
+          error={!!errors[keyName]}
+          helperText={errors[keyName]}
           sx={{
             "& .MuiInputBase-root": {
               borderRadius: "20px",
