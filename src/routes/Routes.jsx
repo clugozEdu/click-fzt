@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./error-page";
 import App from "../App";
-import Login from "../auth/components/login-page";
-import SignUp from "../auth/components/signup-page";
-import RequireAuth from "../auth/auth-provider";
+import Login from "../pages/auth/components/login-page";
+import SignUp from "../pages/auth/components/signup-page";
+import RequireAuth from "../pages/auth/auth-provider";
 import TaskPage from "../tasks/pages/task-page";
 import SpacingPage from "../tasks/pages/spacing-page";
 

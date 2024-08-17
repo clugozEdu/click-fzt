@@ -63,7 +63,9 @@ const AppBarSite = ({ advisor, spacings, loading }) => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
       >
         <Toolbar sx={{ backgroundColor: "#0d1f2d" }}>
           {isMobile && (

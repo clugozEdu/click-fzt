@@ -6,10 +6,10 @@
   z-index: 9999;
 }
 
-.MuiButtonBase-root.MuiChip-root {
+/* .MuiButtonBase-root.MuiChip-root {
   color: white;
   background-color: #0d1f2d;
-}
+} */
 
 .MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.MuiChip-deleteIcon {
   color: white;

@@ -20,15 +20,13 @@ const initialItemsMenu = [
 ];
 
 const MenuCards = ({ taskId, idStatus }) => {
-  const [itemsMenu, setItemsMenu] = useState(initialItemsMenu);
+  const [itemsMenu, setItemsMenu] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
 
   // filter data from menu
   useEffect(() => {
     if (idStatus) {
-      setItemsMenu((prevItemsMenu) =>
-        prevItemsMenu.filter((item) => item.id !== idStatus)
-      );
+      setItemsMenu(initialItemsMenu.filter((item) => item.id !== idStatus));
     }
   }, [idStatus]);
 

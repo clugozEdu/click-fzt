@@ -5,13 +5,18 @@ import AddIcon from "@mui/icons-material/Add";
 import TaskCard from "../components/card-tasks";
 import useUser from "../../context/users";
 import { fetchTasksForList, fetchSupabaseDB } from "../../supabaseServices";
-import { backStatusColor, getColorsScheme } from "../../utils/utilities";
+import {
+  backStatusColor,
+  getColorsScheme,
+  // scrollBarColor,
+} from "../../utils/utilities";
 import NavLinksBreadcrumbs from "../../layout/components/breadcrumbs";
 import CreateDialog from "../../layout/components/create-dialog";
 import SnackbarCustom from "../../layout/components/snackbar";
 import CreateTask from "./create-tasks";
 import supabase from "../../supabaseClient";
 import useLoading from "../../context/loading";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const TaskPage = () => {
   const { advisorLogin } = useUser();
@@ -23,6 +28,8 @@ const TaskPage = () => {
   const [changeBD, setChangeBD] = useState(false);
   const [saveIdStatus, setSaveIdStatus] = useState(0);
   const { setIsLoading } = useLoading();
+  const [parent] = useAutoAnimate(); // Hook para animar el contenedor
+  const [stateParent] = useAutoAnimate(); // Hook para animar el contenedor principal de los estados
 
   // Lógica para cargar las tareas basadas en spacingId y listId
   useEffect(() => {
@@ -99,7 +106,7 @@ const TaskPage = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <NavLinksBreadcrumbs />
-      <Grid container spacing={2} rowSpacing={2}>
+      <Grid container spacing={2} rowSpacing={2} ref={stateParent}>
         {statusTask.map((status) => (
           <Grid
             item
@@ -110,9 +117,14 @@ const TaskPage = () => {
             key={status.id}
             padding={1}
             sx={{
-              maxHeight: 1000,
+              maxHeight: 900,
               overflowY: "auto",
               overflowX: "hidden",
+              scrollbarWidth: "none",
+              // scrollbarColor: getColorsScheme(
+              //   status.status_name,
+              //   scrollBarColor
+              // ),
             }}
           >
             <Box
@@ -162,15 +174,16 @@ const TaskPage = () => {
                 </IconButton>
               </Box>
             </Box>
-            {
-              // Mostrar las tareas del estado actual
-
-              groupedTasks[status.status_name]?.map((task) => (
-                <Grid item mb={2} key={task.id}>
-                  <TaskCard task={task} />
-                </Grid>
-              ))
-            }
+            <Box ref={parent}>
+              {
+                // Mostrar las tareas del estado actual
+                groupedTasks[status.status_name]?.map((task) => (
+                  <Grid item mb={2} key={task.id}>
+                    <TaskCard task={task} />
+                  </Grid>
+                ))
+              }
+            </Box>
           </Grid>
         ))}
       </Grid>

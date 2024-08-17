@@ -1,3 +1,36 @@
+/**
+ * Componente TaskCard
+ * - Este componente muestra la información de una tarea en una tarjeta
+ * - El usuario puede ver la información de la tarea
+ * - El usuario puede editar la información de la tarea
+ * - El usuario puede eliminar la tarea
+ * * Props:
+ * - task: object - Tarea
+ * - task.id: number - ID de la tarea
+ * - task.name_task: string - Nombre de la tarea
+ * - task.description_task: string - Descripción de la tarea
+ * - task.start_date: string - Fecha de inicio de la tarea
+ * - task.end_date: string - Fecha de fin de la tarea
+ * - task.time_task: number - Tiempo de la tarea
+ * - task.priority: object - Prioridad de la tarea
+ * - task.priority.priority_name: string - Nombre de la prioridad
+ * - task.status: object - Estado de la tarea
+ * - task.status.id: number - ID del estado de la tarea
+ * - task.status.status_name: string - Nombre del estado de la tarea
+ * - task.user: object - Usuario asignado a la tarea
+ * - task.user.first_name: string - Nombre del usuario asignado a la tarea
+ * - task.user.last_name: string - Apellido del usuario asignado a la tarea
+ * * Dependencias:
+ * - statusColors: object - Colores de los estados de las tareas
+ * - getColorsScheme: function - Función para obtener el color de un estado
+ * - stringAvatar: function - Función para obtener las iniciales de un nombre
+ * - MenuCards: component - Componente
+ * - PriorityChip: component - Componente
+ * - TimeMenu: component - Componente
+ * - DateMenuCard: component - Componente
+ * - DescriptionMenuCard: component - Componente
+ */
+
 import {
   Card,
   CardContent,
@@ -7,38 +40,24 @@ import {
   Box,
   IconButton,
   Tooltip,
-  Divider,
   Avatar,
 } from "@mui/material";
-import { Flag } from "@mui/icons-material";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import ScheduleIcon from "@mui/icons-material/Schedule";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
 import {
-  priorityColors,
   statusColors,
   getColorsScheme,
-  convertHours,
-  formatDate,
   stringAvatar,
 } from "../../utils/utilities";
 import MenuCards from "./menu-cards";
+import PriorityChip from "./priority-chip";
+import TimeMenu from "./time-menu";
+import DateMenuCard from "./date-menu";
+import DescriptionMenuCard from "./description-menu";
 
 const TaskCard = ({ task }) => {
   // set user name for tooltip
   const userName = `${task.user.first_name} ${task.user.last_name}`;
-  // format day to show
-  const formattedStartDate = task.start_date
-    ? formatDate(task.start_date)
-    : null;
-  const formattedEndDate = task.end_date ? formatDate(task.end_date) : null;
-
-  // handler edit Task
-  const handlerEditTask = (e) => {
-    "Edit task", e;
-  };
 
   // handler delete Task
   const handlerDeleteTask = (e) => {
@@ -52,7 +71,6 @@ const TaskCard = ({ task }) => {
         maxHeight: 400,
         borderRadius: 5,
         boxShadow: 4,
-        borderColor: getColorsScheme(task.status.status_name, statusColors),
       }}
     >
       <CardContent>
@@ -68,13 +86,13 @@ const TaskCard = ({ task }) => {
 
           {/* {task.status.status_name !== "Realizado" && ( */}
           <Box display="flex">
-            <IconButton
+            {/* <IconButton
               onClick={(e) => {
                 handlerEditTask(e);
               }}
             >
               <EditIcon />
-            </IconButton>
+            </IconButton> */}
             <IconButton
               onClick={(e) => {
                 handlerDeleteTask(e);
@@ -86,30 +104,42 @@ const TaskCard = ({ task }) => {
           </Box>
           {/* )} */}
         </Box>
-        <Divider sx={{ mb: 1.5 }} />
-        <Typography variant="body1" sx={{ mb: 1.5 }} color="text.secondary">
-          {task.description_task || "Descripción no disponible"}
-        </Typography>
-        {(formattedStartDate || formattedEndDate) && (
-          <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
-            <CalendarMonthIcon sx={{ mr: 1, color: "text.secondary" }} />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {formattedStartDate && formattedEndDate
-                ? `Del ${formattedStartDate} al ${formattedEndDate}`
-                : formattedStartDate
-                ? `Desde ${formattedStartDate}`
-                : `Hasta ${formattedEndDate}`}
-            </Typography>
-          </Box>
-        )}
-        {task.time_task !== undefined && (
-          <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
-            <ScheduleIcon sx={{ mr: 1, color: "text.secondary" }} />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              {convertHours(task.time_task)} hrs
-            </Typography>
-          </Box>
-        )}
+
+        {/* <Divider sx={{ mb: 1.5 }} /> */}
+
+        {/* Description task */}
+        <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
+          <DescriptionMenuCard
+            description={task.description_task}
+            taskID={task.id}
+          />
+        </Box>
+
+        {/* Date start and end */}
+        <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
+          <DateMenuCard
+            date={task.start_date}
+            text={"Inicio: "}
+            taskID={task.id}
+            keyUpdate={"start_date"}
+          />
+          <Box sx={{ mx: 1 }} />
+          <DateMenuCard
+            date={task.end_date}
+            text={"Fin: "}
+            taskID={task.id}
+            keyUpdate={"end_date"}
+          />
+        </Box>
+
+        {/* Time task */}
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{ mb: 1.5 }} // Añadir cursor: pointer
+        >
+          <TimeMenu task={task} />
+        </Box>
 
         <Grid container spacing={1}>
           <Grid
@@ -120,18 +150,8 @@ const TaskCard = ({ task }) => {
             display={"flex"}
             alignItems={"center"}
           >
-            <Chip
-              label={task.priority.priority_name}
-              icon={<Flag sx={{ fill: "white" }} />}
-              sx={{
-                backgroundColor: getColorsScheme(
-                  task.priority.priority_name,
-                  priorityColors
-                ),
-                color: "white",
-                mr: 1,
-              }}
-            />
+            <PriorityChip priority={task.priority} idTask={task.id} />
+
             <Chip
               label={task.status.status_name}
               sx={{

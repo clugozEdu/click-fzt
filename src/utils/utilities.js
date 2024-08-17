@@ -46,6 +46,12 @@ export const backStatusColor = {
   Realizado: "#008844", // Dark Green
 };
 
+export const scrollBarColor = {
+  Backlog: "#2f4a63 #ffff",
+  "En Progreso": "#0d1f2d #ffff",
+  Realizado: "#008844 #ffff",
+};
+
 export const getColorsScheme = (contextName, objectScheme) => {
   return objectScheme[contextName] || "default";
 };
@@ -55,6 +61,8 @@ export const convertHours = (decimalHours) => {
   const minutes = Math.round((decimalHours - hours) * 60);
   return `${hours}:${minutes.toString().padStart(2, "0")}`;
 };
+
+import dayjs from "dayjs";
 
 export const formatDate = (dateString) => {
   const months = [
@@ -72,10 +80,29 @@ export const formatDate = (dateString) => {
     "Diciembre",
   ];
 
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
+  const date = dayjs(dateString);
+  const day = date.date();
+  const month = months[date.month()];
+  // const year = date.year();
 
-  return `${day} de ${month} ${year}`;
+  return `${day} de ${month}`;
 };
+
+export const timeOptions = [
+  { label: "30 minutos", value: 0.5 },
+  { label: "1 hora", value: 1 },
+  { label: "1 hora 30 minutos", value: 1.5 },
+  { label: "2 horas", value: 2 },
+  { label: "2 horas 30 minutos", value: 2.5 },
+  { label: "3 horas", value: 3 },
+  { label: "3 horas 30 minutos", value: 3.5 },
+  { label: "4 horas", value: 4 },
+  { label: "4 horas 30 minutos", value: 4.5 },
+  { label: "5 horas", value: 5 },
+  { label: "5 horas 30 minutos", value: 5.5 },
+  { label: "6 horas", value: 6 },
+  { label: "6 horas 30 minutos", value: 6.5 },
+  { label: "7 horas", value: 7 },
+  { label: "7 horas 30 minutos", value: 7.5 },
+  { label: "8 horas", value: 8 },
+];
