@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import router from "./routes/routes";
+import router from "./routes/Routes";
 import { RouterProvider } from "react-router-dom";
 import { UserProvider } from "./context/hooks/use-users-context";
 import { LoadingProvider } from "./context/hooks/use-loading-context";
