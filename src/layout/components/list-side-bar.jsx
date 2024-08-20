@@ -22,7 +22,7 @@ import {
 } from "@mui/icons-material";
 import ListIcon from "@mui/icons-material/List";
 import PropTypes from "prop-types";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useUser from "../../context/users";
 import ConfirmDelete from "../../tasks/components/deleted-component";
 
@@ -38,8 +38,9 @@ const ListSideBar = ({
   const [isResposible, setIsResponsible] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedSpacing, setSelectedSpacing] = useState(null);
-  const [deleteListId, setDeleteListId] = useState(null);
-  const [redirect, setRedirect] = useState(false);
+  const [deleteListId, setDeleteListId] = useState(0);
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+  // const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     if (spacings) {
@@ -75,14 +76,17 @@ const ListSideBar = ({
     handleMenuClose();
   };
 
+  // handler to delete a spacing
   const handleDeleteClick = () => {
     onDeleteSpacing(selectedSpacing);
     handleMenuClose();
   };
 
+  // handler to delete list to spacing
   const handleDeleteList = (e, idList) => {
     e.preventDefault();
     setDeleteListId(idList);
+    setIsDeleteConfirm(true);
   };
 
   const renderSpacings = (spacings) => {
@@ -138,9 +142,9 @@ const ListSideBar = ({
     );
   };
 
-  if (redirect) {
-    return <Navigate to="/" replace />;
-  }
+  // if (redirect) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return (
     <Box>
@@ -169,12 +173,12 @@ const ListSideBar = ({
           Eliminar Espacio
         </MenuItem>
       </Menu>
-      {deleteListId && (
+      {isDeleteConfirm && (
         <ConfirmDelete
-          table="table_lists"
+          table={"table_lists"}
           idForDelete={deleteListId}
-          url="/"
-          onRedirect={() => setRedirect(true)}
+          url={"/"}
+          onClose={setIsDeleteConfirm}
         />
       )}
     </Box>

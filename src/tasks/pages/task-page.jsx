@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Grid, Box, IconButton, Chip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import TaskCard from "../components/card-tasks";
+import TaskCard from "../components/tasks-components/card-tasks";
 import useUser from "../../context/users";
 import { fetchTasksForList, fetchSupabaseDB } from "../../supabaseServices";
 import {
@@ -13,9 +13,10 @@ import {
 import NavLinksBreadcrumbs from "../../layout/components/breadcrumbs";
 import CreateDialog from "../../layout/components/create-dialog";
 import SnackbarCustom from "../../layout/components/snackbar";
-import CreateTask from "./create-tasks";
-import supabase from "../../supabaseClient";
+import CreateTask from "../forms/create-tasks";
+// import supabase from "../../supabaseClient";
 import useLoading from "../../context/loading";
+import useSupabaseSubscriptions from "../../hooks/use-supabase-subscriptions";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const TaskPage = () => {
@@ -24,6 +25,7 @@ const TaskPage = () => {
   const [tasks, setTasks] = useState([]);
   const [statusTask, setStatusTask] = useState([]);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [changeBD, setChangeBD] = useState(false);
   const [saveIdStatus, setSaveIdStatus] = useState(0);
@@ -31,51 +33,50 @@ const TaskPage = () => {
   const [parent] = useAutoAnimate(); // Hook para animar el contenedor
   const [stateParent] = useAutoAnimate(); // Hook para animar el contenedor principal de los estados
 
-  // Lógica para cargar las tareas basadas en spacingId y listId
-  useEffect(() => {
-    const loadTask = async () => {
-      setIsLoading(true);
-      const fetchDataTask = fetchTasksForList(listId, advisorLogin.sub);
-      const fetchStatusTask = fetchSupabaseDB("table_status_taks", "*");
+  // Carga de tareas - callback
+  const loadTask = useCallback(async () => {
+    setIsLoading(true);
+    const fetchDataTask = fetchTasksForList(listId, advisorLogin.sub);
+    const fetchStatusTask = fetchSupabaseDB("table_status_taks", "*");
 
-      const [tasksFeth, dataStatusTask] = await Promise.all([
-        fetchDataTask,
-        fetchStatusTask,
-      ]);
+    const [tasksFeth, dataStatusTask] = await Promise.all([
+      fetchDataTask,
+      fetchStatusTask,
+    ]);
 
-      setTasks(tasksFeth.data || []);
-      setStatusTask(dataStatusTask.data || []);
+    setTasks(tasksFeth.data || []);
+    setStatusTask(dataStatusTask.data || []);
 
-      setIsLoading(false);
-    };
-
-    // callback para cargar las tareas
-    loadTask();
-
-    // Configuración de la suscripción a cambios de la base de datos
-    const channel = supabase
-      .channel("schema-db-task-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "table_tasks" },
-        (payload) => {
-          console.log("Received an insert:", payload);
-          loadTask();
-          setChangeBD(true);
-        }
-      )
-      .subscribe();
-
-    // Limpieza de la suscripción
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-        setTimeout(() => {
-          setShowSnackbar(false);
-        }, 3000);
-      }
-    };
+    setIsLoading(false);
   }, [advisorLogin.sub, listId, setIsLoading]);
+
+  // Función para manejar los eventos de la base de datos
+  const handleEvent = useCallback(
+    (tableName, payload) => {
+      console.log(`Received an event on ${tableName}:`, payload);
+      loadTask();
+      setChangeBD(true);
+
+      if (payload.eventType === "INSERT") {
+        setSnackbarMessage("creada exitosamente");
+      } else if (payload.eventType === "UPDATE") {
+        setSnackbarMessage("actualizada");
+      } else if (payload.eventType === "DELETE") {
+        setSnackbarMessage("eliminada");
+      }
+    },
+    [loadTask]
+  );
+
+  // Configuración de las suscripciones a cambios en la base de datos
+  useSupabaseSubscriptions([{ tableName: "table_tasks" }], handleEvent);
+
+  // Cargar los datos iniciales cuando el asesor cambie
+  useEffect(() => {
+    if (advisorLogin && advisorLogin.sub) {
+      loadTask();
+    }
+  }, [advisorLogin, loadTask]);
 
   // Mostrar Snackbar cuando se actualiza la base de datos
   useEffect(() => {
@@ -84,13 +85,27 @@ const TaskPage = () => {
     }
   }, [changeBD, tasks]);
 
+  // Funcion para verificar si una tarea esta vencida
+  const isTaskOverdue = (dueDate, status_task) => {
+    if (status_task === "Realizado") {
+      return false;
+    }
+
+    const today = new Date();
+    const taskDate = new Date(dueDate);
+    return taskDate < today;
+  };
+
   // Agrupar tareas por estado
   const groupedTasks = tasks.reduce((acc, task) => {
     const status = task.status.status_name;
     if (!acc[status]) {
       acc[status] = [];
     }
-    acc[status].push(task);
+    acc[status].push({
+      ...task,
+      overdue: isTaskOverdue(task.end_date, task.status.status_name),
+    });
     return acc;
   }, {});
 
@@ -121,10 +136,6 @@ const TaskPage = () => {
               overflowY: "auto",
               overflowX: "hidden",
               scrollbarWidth: "none",
-              // scrollbarColor: getColorsScheme(
-              //   status.status_name,
-              //   scrollBarColor
-              // ),
             }}
           >
             <Box
@@ -179,7 +190,7 @@ const TaskPage = () => {
                 // Mostrar las tareas del estado actual
                 groupedTasks[status.status_name]?.map((task) => (
                   <Grid item mb={2} key={task.id}>
-                    <TaskCard task={task} />
+                    <TaskCard task={task} isOverdue={task.overdue} />
                   </Grid>
                 ))
               }
@@ -199,7 +210,7 @@ const TaskPage = () => {
       {showSnackbar && (
         <SnackbarCustom
           open={showSnackbar}
-          message={"Tareas actualizadas con éxito"}
+          message={`${advisorLogin.fullname} ha ${snackbarMessage} una tarea`}
           title={"Completado"}
           onCloseHandler={() => {
             setShowSnackbar(false);

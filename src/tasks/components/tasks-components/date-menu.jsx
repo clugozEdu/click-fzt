@@ -18,8 +18,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import { formatDate } from "../../utils/utilities";
-import { handlerUpdateBD } from "../../supabaseServices";
+import { formatDate } from "../../../utils/utilities";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 const DateMenuCard = ({ date, text, taskID, keyUpdate }) => {
   const [anchorEl, setAnchorEl] = useState(null);

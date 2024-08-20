@@ -13,9 +13,9 @@ import { useState } from "react";
 import { Menu, MenuItem, Typography } from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import PropTypes from "prop-types";
-import { convertHours } from "../../utils/utilities";
-import { timeOptions } from "../../utils/utilities";
-import { handlerUpdateBD } from "../../supabaseServices";
+import { convertHours } from "../../../utils/utilities";
+import { timeOptions } from "../../../utils/utilities";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 const TimeMenu = ({ task }) => {
   const [anchorEl, setAnchorEl] = useState(null);

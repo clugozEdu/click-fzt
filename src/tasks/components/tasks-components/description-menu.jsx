@@ -13,20 +13,16 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Typography, Box, Menu, Button } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
-import TextAreaCustom from "../../layout/components/text-area";
-import { handlerUpdateBD } from "../../supabaseServices";
+import TextAreaCustom from "../../../layout/components/text-area";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 const DescriptionMenuCard = ({ description, taskID }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [descriptionTask, setDescriptionTask] = useState(description);
   const [descriptionTruncate, setDescriptionTruncate] = useState(description);
+  const [tempDescription, setTempDescription] = useState(description);
 
-  // Actualizar el estado de la descripción
-  useEffect(() => {
-    setDescriptionTask(description);
-  }, [description]);
-
-  // Truncar la descripción si es mayor a 50 caracteres
+  // Actualizar el estado de la descripción truncada
   useEffect(() => {
     if (descriptionTask.length > 45) {
       setDescriptionTruncate(descriptionTask.substring(0, 45) + "...");
@@ -38,6 +34,7 @@ const DescriptionMenuCard = ({ description, taskID }) => {
   // Mostrar el menú al hacer clic en el ícono
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
+    setTempDescription(descriptionTask); // Establecer la descripción temporal al abrir el menú
   };
 
   // Cerrar el menú
@@ -46,12 +43,13 @@ const DescriptionMenuCard = ({ description, taskID }) => {
   };
 
   // Guardar los cambios en la descripción
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     const columnUpdate = {
-      description_task: descriptionTask,
+      description_task: tempDescription,
     };
     // Actualizar la base de datos
-    handlerUpdateBD("table_tasks", columnUpdate, taskID);
+    await handlerUpdateBD("table_tasks", columnUpdate, taskID);
+    setDescriptionTask(tempDescription); // Actualizar la descripción de la tarjeta solo después de guardar
     handleMenuClose();
   };
 
@@ -80,8 +78,8 @@ const DescriptionMenuCard = ({ description, taskID }) => {
           </Typography>
           <TextAreaCustom
             minRows={3}
-            value={descriptionTask}
-            onChange={(e) => setDescriptionTask(e.target.value)}
+            value={tempDescription}
+            onChange={(e) => setTempDescription(e.target.value)}
           />
 
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>

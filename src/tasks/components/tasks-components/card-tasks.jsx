@@ -41,6 +41,7 @@ import {
   IconButton,
   Tooltip,
   Avatar,
+  Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
@@ -48,14 +49,14 @@ import {
   statusColors,
   getColorsScheme,
   stringAvatar,
-} from "../../utils/utilities";
+} from "../../../utils/utilities";
 import MenuCards from "./menu-cards";
 import PriorityChip from "./priority-chip";
 import TimeMenu from "./time-menu";
 import DateMenuCard from "./date-menu";
 import DescriptionMenuCard from "./description-menu";
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, isOverdue }) => {
   // set user name for tooltip
   const userName = `${task.user.first_name} ${task.user.last_name}`;
 
@@ -80,19 +81,25 @@ const TaskCard = ({ task }) => {
           justifyContent="space-between"
           flexWrap="wrap"
         >
+          {/* Name task */}
           <Typography variant="h6" component="div" margin={0} gutterBottom>
             {task.name_task}
           </Typography>
 
+          {/* Chip is overdue */}
+          {isOverdue && (
+            <Chip
+              label="Atrasada"
+              sx={{
+                backgroundColor: "red",
+                color: "white",
+                borderRadius: 5,
+              }}
+            />
+          )}
+
           {/* {task.status.status_name !== "Realizado" && ( */}
           <Box display="flex">
-            {/* <IconButton
-              onClick={(e) => {
-                handlerEditTask(e);
-              }}
-            >
-              <EditIcon />
-            </IconButton> */}
             <IconButton
               onClick={(e) => {
                 handlerDeleteTask(e);
@@ -100,12 +107,13 @@ const TaskCard = ({ task }) => {
             >
               <DeleteIcon />
             </IconButton>
+
+            {/* Menu task to move task */}
             <MenuCards idStatus={task.status.id} taskId={task.id} />
           </Box>
-          {/* )} */}
         </Box>
 
-        {/* <Divider sx={{ mb: 1.5 }} /> */}
+        <Divider sx={{ mb: 1.5 }} />
 
         {/* Description task */}
         <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
@@ -133,11 +141,7 @@ const TaskCard = ({ task }) => {
         </Box>
 
         {/* Time task */}
-        <Box
-          display="flex"
-          alignItems="center"
-          sx={{ mb: 1.5 }} // Añadir cursor: pointer
-        >
+        <Box display="flex" alignItems="center" sx={{ mb: 1.5 }}>
           <TimeMenu task={task} />
         </Box>
 
@@ -150,8 +154,10 @@ const TaskCard = ({ task }) => {
             display={"flex"}
             alignItems={"center"}
           >
+            {/* Priority task */}
             <PriorityChip priority={task.priority} idTask={task.id} />
 
+            {/* Status task */}
             <Chip
               label={task.status.status_name}
               sx={{
@@ -163,6 +169,7 @@ const TaskCard = ({ task }) => {
                 mr: 1,
               }}
             />
+            {/* User task */}
             <Tooltip title={userName}>
               <Avatar
                 sx={{ width: 32, height: 32, marginRight: 1 }}
@@ -179,6 +186,7 @@ const TaskCard = ({ task }) => {
 TaskCard.propTypes = {
   task: PropTypes.shape({
     id: PropTypes.number.isRequired,
+
     name_task: PropTypes.string.isRequired,
     description_task: PropTypes.string,
     start_date: PropTypes.string,
@@ -196,6 +204,7 @@ TaskCard.propTypes = {
       last_name: PropTypes.string,
     }),
   }).isRequired,
+  isOverdue: PropTypes.bool,
 };
 
 export default TaskCard;

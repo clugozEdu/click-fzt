@@ -31,7 +31,6 @@ function RequireAuth({ children }) {
     };
   }, []); // Sin dependencias se ejecuta al montar y desmontar
 
-  // Verificar si el token ha expirado
   const isTokenExpired = (session) => {
     if (!session) return true;
 
@@ -39,33 +38,14 @@ function RequireAuth({ children }) {
     const isExpired = session.expires_at < currentTime;
 
     if (isExpired) {
-      localStorage.removeItem("sb-iemhpugvjgaazoifqjpj-auth-token"); // Eliminar la sesión del localStorage si ha expirado
+      localStorage.removeItem("sb-iemhpugvjgaazoifqjpj-auth-token");
     }
 
     return isExpired;
   };
 
-  // const timeUntilExpiration = (session) => {
-  //   if (!session) return "Session not provided";
-
-  //   const currentTime = Math.floor(Date.now() / 1000);
-  //   const expiresAt = session.expires_at;
-
-  //   if (expiresAt < currentTime) return "Token already expired";
-
-  //   const remainingTimeInSeconds = expiresAt - currentTime;
-
-  //   const hours = Math.floor(remainingTimeInSeconds / 3600);
-  //   const minutes = Math.floor((remainingTimeInSeconds % 3600) / 60);
-  //   const seconds = remainingTimeInSeconds % 60;
-
-  //   return `${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
-  // };
-
-  // console.log(timeUntilExpiration(session));
-
   if (loading) {
-    return <div>Loading...</div>;
+    return null;
   }
 
   if (!session || isTokenExpired(session)) {

@@ -7,9 +7,12 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import useUser from "../../context/users";
+import useUser from "../../../context/users";
 import PropTypes from "prop-types";
-import { fetchSupabaseDB, handlerInsertSupabase } from "../../supabaseServices";
+import {
+  fetchSupabaseDB,
+  handlerInsertSupabase,
+} from "../../../supabaseServices";
 
 const FormCreate = ({
   setOpenDialog,
