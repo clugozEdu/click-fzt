@@ -4,7 +4,7 @@ import TableDetails from "./spacing-components/table-lists";
 import TableUser from "./spacing-components/user-details";
 import TableTask from "./spacing-components/table-tasks";
 
-const SpacingDashboard = ({ lists, users, nameSpacing, tasks }) => {
+const SpacingDashboard = ({ lists, users, tasks }) => {
   const noData =
     !lists ||
     lists.length === 0 ||
@@ -15,11 +15,11 @@ const SpacingDashboard = ({ lists, users, nameSpacing, tasks }) => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Typography variant="h6" gutterBottom>
           Espacio: <strong>{nameSpacing}</strong>
         </Typography>
-      </Grid>
+      </Grid> */}
       {noData ? (
         <Grid item xs={12}>
           <Typography variant="h6" align="center" gutterBottom>
@@ -73,7 +73,7 @@ const SpacingDashboard = ({ lists, users, nameSpacing, tasks }) => {
 SpacingDashboard.propTypes = {
   lists: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
-  nameSpacing: PropTypes.string.isRequired,
+  // nameSpacing: PropTypes.string.isRequired,
   tasks: PropTypes.array.isRequired,
 };
 

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Divider } from "@mui/material";
 import useUser from "../../context/users";
 import { fetchSpacingAll, fetchSupabaseDB } from "../../supabaseServices";
 import SpacingDashboard from "../components/spacing-dashboard";
 import useLoading from "../../context/loading";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import HeaderMenu from "../../layout/components/header-menu";
 
 const SpacingPage = () => {
   const { setIsLoading } = useLoading();
@@ -14,6 +16,7 @@ const SpacingPage = () => {
   const [users, setUsers] = useState([]);
   const [filterTask, setFilterTask] = useState([]);
   const [stateParent] = useAutoAnimate(); // Hook para animar el contenedor principal de los estados
+  const [currentView, setCurrentView] = useState("dashboard");
 
   useEffect(() => {
     setIsLoading(true);
@@ -45,16 +48,23 @@ const SpacingPage = () => {
 
   return (
     <div ref={stateParent}>
+      <HeaderMenu onViewChange={setCurrentView} />
+
+      <Divider sx={{ mb: 2 }} />
+
       {filterTask.length > 0 &&
-        filterTask.map((item, index) => (
-          <SpacingDashboard
-            key={index}
-            tasks={item.lists.flatMap((task) => task.tasks)}
-            lists={item.lists}
-            users={users}
-            nameSpacing={item.name_spacing}
-          />
-        ))}
+        filterTask.map(
+          (item, index) =>
+            currentView === "dashboard" && (
+              <SpacingDashboard
+                key={index}
+                tasks={item.lists.flatMap((task) => task.tasks)}
+                lists={item.lists}
+                users={users}
+                nameSpacing={item.name_spacing}
+              />
+            )
+        )}
     </div>
   );
 };
