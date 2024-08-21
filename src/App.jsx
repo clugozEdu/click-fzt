@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CssBaseline } from "@mui/material";
 import AppBarSite from "./layout/components/app-bar";
 import { fetchSpacingAll } from "./supabaseServices";
 import useUser from "./context/users";
-import supabase from "./supabaseClient"; // Asegúrate de que la ruta de importación es correcta
 import useLoading from "./context/loading";
+import useSupabaseSubscriptions from "./hooks/use-supabase-subscriptions";
 
 function App() {
   const { advisorLogin } = useUser();
@@ -19,39 +19,35 @@ function App() {
     }
   }, [advisorLogin, storedAdvisor]);
 
-  useEffect(() => {
-    const loadSpacings = async () => {
-      setIsLoading(true);
-      const { data } = await fetchSpacingAll(storedAdvisor.sub);
-      setSpacingUser(data);
-      setIsLoading(false);
-    };
+  const loadSpacings = useCallback(async () => {
+    setIsLoading(true);
+    if (!storedAdvisor?.sub) return;
+    const { data } = await fetchSpacingAll(storedAdvisor.sub);
+    setSpacingUser(data);
+    setIsLoading(false);
+  }, [storedAdvisor, setIsLoading]);
 
-    // Cargar los datos solo si storedAdvisor está definido
+  // Función para manerjar los eventos de la base de datos
+  const handleEvent = useCallback(
+    (tableName, payload) => {
+      console.log(`Received an event on ${tableName}:`, payload);
+      loadSpacings();
+    },
+    [loadSpacings]
+  );
+
+  // Configuración de las suscripciones a cambios en la base de datos
+  useSupabaseSubscriptions(
+    [{ tableName: "table_lists" }, { tableName: "table_spacing" }],
+    handleEvent
+  );
+
+  // Cargar los datos inciales cuando el asesor cambie
+  useEffect(() => {
     if (storedAdvisor && storedAdvisor.sub) {
       loadSpacings();
     }
-
-    // Configuración de la suscripción a cambios de la base de datos
-    const channel = supabase
-      .channel("schema-db-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "table_lists" },
-        (payload) => {
-          console.log("Received an insert:", payload);
-          loadSpacings();
-        }
-      )
-      .subscribe();
-
-    // Limpieza de la suscripción
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-      }
-    };
-  }, [storedAdvisor, setIsLoading]);
+  }, [storedAdvisor, loadSpacings]);
 
   return (
     <>

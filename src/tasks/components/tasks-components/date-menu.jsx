@@ -1,25 +1,13 @@
-/**
- * Componente DateMenuCard
- * - Este componente muestra un ícono de calendario y la fecha de una tarea
- * - Al hacer clic en el ícono, se despliega un menú con un calendario
- * - El usuario puede seleccionar una fecha y esta se actualiza en la base de datos
- * * Props:
- * - date: string - Fecha de la tarea
- * - text: string - Texto a mostrar antes de la fecha
- * - taskID: number - ID de la tarea
- * - keyUpdate: string - Clave de la columna a actualizar en la base de datos
- */
-
 import { useState } from "react";
-import { Typography, Menu, MenuItem } from "@mui/material";
+import { Typography, Menu, MenuItem, Box } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import { formatDate } from "../../utils/utilities";
-import { handlerUpdateBD } from "../../supabaseServices";
+import { formatDate } from "../../../utils/utilities";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 const DateMenuCard = ({ date, text, taskID, keyUpdate }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -53,13 +41,15 @@ const DateMenuCard = ({ date, text, taskID, keyUpdate }) => {
 
   return (
     <>
-      <CalendarMonthIcon
-        sx={{ mr: 1, color: "text.secondary", cursor: "pointer" }}
-        onClick={handleIconClick}
-      />
-      <Typography variant="body2" sx={{ color: "text.secondary" }}>
-        {text} {formattedDate}
-      </Typography>
+      <Box display="flex" alignItems="center">
+        <CalendarMonthIcon
+          sx={{ mr: 1, color: "text.secondary", cursor: "pointer" }}
+          onClick={handleIconClick}
+        />
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          {text} {formattedDate}
+        </Typography>
+      </Box>
 
       <Menu
         anchorEl={anchorEl}
@@ -93,7 +83,7 @@ const DateMenuCard = ({ date, text, taskID, keyUpdate }) => {
 // Validar las props del componente
 DateMenuCard.propTypes = {
   date: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
   taskID: PropTypes.number.isRequired,
   keyUpdate: PropTypes.string.isRequired,
 };

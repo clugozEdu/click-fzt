@@ -11,7 +11,8 @@ const stringToColor = (string) => {
 
   for (i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;
-    color += `00${value.toString(16)}`.slice(-2);
+    const pastelValue = Math.floor(value * 0.7); // Ajustar para colores más oscuros y pasteles
+    color += `00${pastelValue.toString(16)}`.slice(-2);
   }
 
   return color;

@@ -16,8 +16,8 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Chip, MenuItem, Menu } from "@mui/material";
 import { Flag } from "@mui/icons-material";
-import { getColorsScheme, priorityColors } from "../../utils/utilities";
-import { handlerUpdateBD } from "../../supabaseServices";
+import { getColorsScheme, priorityColors } from "../../../utils/utilities";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 // Opciones de prioridad
 const initialItemsMenu = [

@@ -1,11 +1,8 @@
-import { useRouteError } from "react-router-dom";
 import { Typography, Button, Container } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
+import PropTypes from "prop-types";
 
-export default function ErrorPage() {
-  const error = useRouteError();
-  console.error(error);
-
+export default function ErrorPage({ error }) {
   return (
     <Container
       sx={{
@@ -20,9 +17,14 @@ export default function ErrorPage() {
       <Typography variant="h1" component="div" gutterBottom>
         404
       </Typography>
-      <Typography variant="h6" component="div" gutterBottom>
+      {/* <Typography variant="h6" component="div" gutterBottom>
         Oops, the page you were looking for could not be found.
-      </Typography>
+      </Typography> */}
+      {error && (
+        <Typography variant="h6" gutterBottom>
+          {error.statusText || error.message}
+        </Typography>
+      )}
       <Button
         variant="outlined"
         color="error"
@@ -30,8 +32,15 @@ export default function ErrorPage() {
         href="/"
         sx={{ mt: 2 }}
       >
-        Go to Homepage
+        Ir a la página principal
       </Button>
     </Container>
   );
 }
+
+ErrorPage.propTypes = {
+  error: PropTypes.shape({
+    statusText: PropTypes.string,
+    message: PropTypes.string,
+  }),
+};

@@ -13,8 +13,8 @@ import {
 import PropTypes from "prop-types";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountMenu from "./account-menu";
-import CreateSpacingForm from "../../tasks/pages/create-spacing";
-import CreateListForm from "../../tasks/pages/create-lists";
+import CreateSpacingForm from "../../tasks/forms/create-spacing";
+import CreateListForm from "../../tasks/forms/create-lists";
 import ConfirmDelete from "../../tasks/components/deleted-component"; // Import the ConfirmDelete component
 import LinearIndeterminate from "./linear-progress";
 import CreateDialog from "./create-dialog";
@@ -25,6 +25,7 @@ const AppBarSite = ({ advisor, spacings, loading }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [idSpacing, setIdSpacing] = useState(0);
   const [contextDialog, setContextDialog] = useState("");
+  const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const barSize = useMediaQuery(theme.breakpoints.down("lg"));
@@ -39,11 +40,10 @@ const AppBarSite = ({ advisor, spacings, loading }) => {
     setContextDialog("creatingSpacing");
   };
 
-  const handleDeleteSpacing = (idSpacing) => {
+  const handleDeleteSpacing = (id) => {
     setContextDialog("");
-    setIdSpacing(idSpacing);
-    // Directly trigger the SweetAlert confirmation
-    ConfirmDelete("table_spacing", idSpacing);
+    setIdSpacing(id);
+    setIsDeleteConfirm(true);
   };
 
   const handleAddList = (id) => {
@@ -132,6 +132,16 @@ const AppBarSite = ({ advisor, spacings, loading }) => {
           ""
         )}
       </CreateDialog>
+
+      {/* Dialog for deleting space */}
+      {isDeleteConfirm && contextDialog === "" && (
+        <ConfirmDelete
+          table={"table_spacing"}
+          idForDelete={idSpacing}
+          url={"/"}
+          onClose={setIsDeleteConfirm}
+        />
+      )}
 
       <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 6 }}>
         <Outlet />

@@ -96,12 +96,15 @@ export const fetchSpacingAll = async (userID) => {
     return { data: null, error: spacingError };
   }
 
-  console.log(spacings);
-
   // Filter data according to the user's role (responsible or not) and list is_active status
   const filteredData = spacings
     .map((spacing) => {
       const isResponsibleForSpacing = spacing.user_responsible_id === userID;
+
+      // filter spacings by is_active status
+      if (!spacing.is_active) {
+        return null;
+      }
 
       // Filter lists by is_active status
       spacing.lists = spacing.lists.filter((list) => list.is_active);

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import FormCreate from "../forms/form-create";
+import FormCreate from "../forms/components/form-create";
 
 const CreateSpacingForm = ({ setOpenDialog }) => {
   const objectPost = {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import { handlerUpdateBD } from "../../supabaseServices";
+import { handlerUpdateBD } from "../../../supabaseServices";
 
 const initialItemsMenu = [
   {
