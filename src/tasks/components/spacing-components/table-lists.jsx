@@ -25,7 +25,7 @@ const TableDetails = ({ lists, users }) => {
     { id: "backlog", label: "Backlog", align: "right" },
     { id: "inProgress", label: "En Progreso", align: "right" },
     { id: "done", label: "Realizado", align: "right" },
-    { id: "responsables", label: "Responsables", align: "center" },
+    { id: "responsables", label: "Responsables", align: "rigth" },
   ];
 
   const transformRow = (list) => {
@@ -66,18 +66,20 @@ const TableDetails = ({ lists, users }) => {
       inProgress: listInProgress,
       done: listDone,
       responsables: (
-        <AvatarGroup max={3}>
-          {filteredUsers.map((user) => (
-            <Tooltip
-              key={user.id}
-              title={`${user.first_name} ${user.second_name} ${user.last_name} ${user.second_lastname}`}
-            >
-              <Avatar
-                {...stringAvatar(`${user.first_name} ${user.last_name}`)}
-              />
-            </Tooltip>
-          ))}
-        </AvatarGroup>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <AvatarGroup max={4}>
+            {filteredUsers.map((user) => (
+              <Tooltip
+                key={user.id}
+                title={`${user.first_name} ${user.second_name} ${user.last_name} ${user.second_lastname}`}
+              >
+                <Avatar
+                  {...stringAvatar(`${user.first_name} ${user.last_name}`)}
+                />
+              </Tooltip>
+            ))}
+          </AvatarGroup>
+        </Box>
       ),
     };
   };

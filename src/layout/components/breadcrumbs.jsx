@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Breadcrumbs, Typography } from "@mui/material";
+import { Breadcrumbs, Typography, Box } from "@mui/material";
 import { Grid } from "@mui/material";
+import { FolderOpen, List } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
 import supabase from "../../supabaseClient";
 
@@ -8,7 +9,7 @@ function NavLinksBreadcrumbs() {
   const { listId, spacingId } = useParams();
   const [nameList, setNameList] = useState("");
   const [nameSpacing, setNameSpacing] = useState("");
-  const [breadcrumb, setBreadcrumb] = useState("");
+  const [breadcrumb, setBreadcrumb] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,26 +52,34 @@ function NavLinksBreadcrumbs() {
   }, [listId, spacingId]);
 
   useEffect(() => {
-    if (nameSpacing && nameList) {
-      setBreadcrumb(`${nameSpacing} / ${nameList}`);
-    } else if (nameSpacing) {
-      setBreadcrumb(nameSpacing);
-    } else if (nameList) {
-      setBreadcrumb(nameList);
-    } else {
-      setBreadcrumb("");
+    const breadcrumbItems = [];
+    if (nameSpacing) {
+      breadcrumbItems.push({
+        label: nameSpacing,
+        icon: <FolderOpen sx={{ mr: 1, color: "text.secondary" }} />,
+      });
     }
+    if (nameList) {
+      breadcrumbItems.push({
+        label: nameList,
+        icon: <List sx={{ mr: 1, color: "text.secondary" }} />,
+      });
+    }
+    setBreadcrumb(breadcrumbItems);
   }, [nameList, nameSpacing]);
 
   return (
-    <Grid container>
-      <Grid item sx={{ mb: 2 }}>
+    <Grid container sx={{ mt: 1 }}>
+      <Grid item sx={{ mb: 1 }}>
         <Breadcrumbs>
-          {breadcrumb && (
-            <Typography variant="h6" color="black">
-              {breadcrumb}
-            </Typography>
-          )}
+          {breadcrumb.map((item, index) => (
+            <Box key={index} display="flex" alignItems="center">
+              {item.icon}
+              <Typography variant="body2" color="black">
+                {item.label}
+              </Typography>
+            </Box>
+          ))}
         </Breadcrumbs>
       </Grid>
     </Grid>

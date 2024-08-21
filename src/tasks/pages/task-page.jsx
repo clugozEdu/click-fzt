@@ -1,23 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Grid, Box, IconButton, Chip } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import TaskCard from "../components/tasks-components/card-tasks";
+import { Box, Divider } from "@mui/material";
 import useUser from "../../context/users";
+import useLoading from "../../context/loading";
 import { fetchTasksForList, fetchSupabaseDB } from "../../supabaseServices";
-import {
-  backStatusColor,
-  getColorsScheme,
-  // scrollBarColor,
-} from "../../utils/utilities";
-import NavLinksBreadcrumbs from "../../layout/components/breadcrumbs";
 import CreateDialog from "../../layout/components/create-dialog";
 import SnackbarCustom from "../../layout/components/snackbar";
 import CreateTask from "../forms/create-tasks";
-// import supabase from "../../supabaseClient";
-import useLoading from "../../context/loading";
 import useSupabaseSubscriptions from "../../hooks/use-supabase-subscriptions";
+import HeaderMenu from "../../layout/components/header-menu";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import BoardTask from "./components/board-task";
+import ListTask from "./components/lists-task";
+import CalendarTasks from "./components/calendar-task";
+import dayjs from "dayjs";
 
 const TaskPage = () => {
   const { advisorLogin } = useUser();
@@ -32,6 +28,7 @@ const TaskPage = () => {
   const { setIsLoading } = useLoading();
   const [parent] = useAutoAnimate(); // Hook para animar el contenedor
   const [stateParent] = useAutoAnimate(); // Hook para animar el contenedor principal de los estados
+  const [currentView, setCurrentView] = useState("board"); // Estado para la vista actual
 
   // Carga de tareas - callback
   const loadTask = useCallback(async () => {
@@ -80,10 +77,12 @@ const TaskPage = () => {
 
   // Mostrar Snackbar cuando se actualiza la base de datos
   useEffect(() => {
-    if (changeBD && tasks.length > 0) {
+    if (changeBD) {
       setShowSnackbar(true);
+      // Resetear el estado después de mostrar el Snackbar
+      setChangeBD(false);
     }
-  }, [changeBD, tasks]);
+  }, [changeBD]);
 
   // Funcion para verificar si una tarea esta vencida
   const isTaskOverdue = (dueDate, status_task) => {
@@ -91,23 +90,27 @@ const TaskPage = () => {
       return false;
     }
 
-    const today = new Date();
-    const taskDate = new Date(dueDate);
-    return taskDate < today;
+    // validar con dayjs
+    const today = dayjs();
+    const due = dayjs(dueDate);
+    return today.isAfter(due, "day");
   };
 
-  // Agrupar tareas por estado
-  const groupedTasks = tasks.reduce((acc, task) => {
-    const status = task.status.status_name;
-    if (!acc[status]) {
-      acc[status] = [];
-    }
-    acc[status].push({
+  // Agrupar y ordenar tareas por estado y fecha de vencimiento
+  const groupedTasks = tasks
+    .map((task) => ({
       ...task,
       overdue: isTaskOverdue(task.end_date, task.status.status_name),
-    });
-    return acc;
-  }, {});
+    }))
+    .sort((a, b) => dayjs(a.end_date).diff(dayjs(b.end_date)))
+    .reduce((acc, task) => {
+      const status = task.status.status_name;
+      if (!acc[status]) {
+        acc[status] = [];
+      }
+      acc[status].push(task);
+      return acc;
+    }, {});
 
   const handlerAddTask = (idStatus) => {
     setIsDialogOpen(true);
@@ -120,85 +123,27 @@ const TaskPage = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <NavLinksBreadcrumbs />
-      <Grid container spacing={2} rowSpacing={2} ref={stateParent}>
-        {statusTask.map((status) => (
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            md={4}
-            lg={4}
-            key={status.id}
-            padding={1}
-            sx={{
-              maxHeight: 900,
-              overflowY: "auto",
-              overflowX: "hidden",
-              scrollbarWidth: "none",
-            }}
-          >
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{
-                background: getColorsScheme(
-                  status.status_name,
-                  backStatusColor
-                ),
-                marginBottom: 2,
-                color: "white",
-                borderRadius: 5,
-                boxShadow: 3,
-              }}
-            >
-              <Typography
-                variant="h6"
-                component="div"
-                mb={0}
-                gutterBottom
-                sx={{
-                  ml: 2,
-                }}
-              >
-                {status.status_name}
-              </Typography>
-              <Box display="flex" alignItems="center">
-                <Chip
-                  label={
-                    <Typography variant="h6" component="div">
-                      {groupedTasks[status.status_name]?.length || 0}
-                    </Typography>
-                  }
-                  sx={{
-                    background: "inherit",
-                    color: "white",
-                  }}
-                />
-                <IconButton onClick={(e) => handlerAddTask(status.id, e)}>
-                  <AddIcon
-                    sx={{
-                      fill: "white",
-                    }}
-                  />
-                </IconButton>
-              </Box>
-            </Box>
-            <Box ref={parent}>
-              {
-                // Mostrar las tareas del estado actual
-                groupedTasks[status.status_name]?.map((task) => (
-                  <Grid item mb={2} key={task.id}>
-                    <TaskCard task={task} isOverdue={task.overdue} />
-                  </Grid>
-                ))
-              }
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
+      {/* Header */}
+      <HeaderMenu onViewChange={setCurrentView} />
 
+      <Divider sx={{ mb: 2 }} />
+      {currentView === "board" && (
+        <BoardTask
+          groupedTasks={groupedTasks}
+          statusTask={statusTask}
+          stateParent={stateParent}
+          parent={parent}
+          handleAddTask={handlerAddTask}
+        />
+      )}
+      {currentView === "list" && (
+        <ListTask
+          groupedTasks={groupedTasks}
+          statusTask={statusTask}
+          handleAddTask={handlerAddTask}
+        />
+      )}
+      {currentView === "calendar" && <CalendarTasks tasks={tasks} />}
       <CreateDialog open={isDialogOpen} onClose={handleCloseDialog}>
         <CreateTask
           idStatus={saveIdStatus}
@@ -206,7 +151,6 @@ const TaskPage = () => {
           setIsDialogOpen={setIsDialogOpen}
         />
       </CreateDialog>
-
       {showSnackbar && (
         <SnackbarCustom
           open={showSnackbar}

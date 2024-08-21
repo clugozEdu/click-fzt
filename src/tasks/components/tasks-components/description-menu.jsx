@@ -1,14 +1,3 @@
-/**
- * Componente DescriptionMenuCard
- * - Este componente muestra un ícono de descripción y la descripción de una tarea
- * - Al hacer clic en el ícono, se despliega un menú con un campo de texto
- * - El usuario puede editar la descripción y guardar los cambios
- * - La descripción se actualiza en la base de datos
- * * Props:
- * - description: string - Descripción de la tarea
- * - taskID: number - ID de la tarea
- */
-
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Typography, Box, Menu, Button } from "@mui/material";
@@ -55,13 +44,15 @@ const DescriptionMenuCard = ({ description, taskID }) => {
 
   return (
     <>
-      <DescriptionIcon
-        sx={{ mr: 1, color: "text.secondary", cursor: "pointer" }}
-        onClick={handleMenuClick}
-      />
-      <Typography variant="body1" color="text.secondary">
-        {descriptionTruncate || "Descripción no disponible"}
-      </Typography>
+      <Box display="flex" alignItems="center">
+        <DescriptionIcon
+          sx={{ mr: 1, color: "text.secondary", cursor: "pointer" }}
+          onClick={handleMenuClick}
+        />
+        <Typography variant="body1" color="text.secondary">
+          {descriptionTruncate || "Descripción no disponible"}
+        </Typography>
+      </Box>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

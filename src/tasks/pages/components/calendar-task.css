@@ -1,0 +1,20 @@
+/* calendar-task.css */
+.tasks {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  border: 0px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: small;
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el desbordamiento del texto */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es demasiado largo */
+
+  /* animate tasks */
+  transition: all 0.3s;
+}
+
+.tasks:hover {
+  transform: scale(1.01); /* Aumenta el tamaño del elemento */
+}

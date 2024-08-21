@@ -12,7 +12,7 @@ import {
 import PropTypes from "prop-types";
 export const TableComponent = ({ columns, rows, keys }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -49,7 +49,7 @@ export const TableComponent = ({ columns, rows, keys }) => {
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[6, 10, 25]}
+        rowsPerPageOptions={[10, 25]}
         component="div"
         count={rows.length}
         rowsPerPage={rowsPerPage}
