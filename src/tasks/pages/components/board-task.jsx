@@ -59,7 +59,7 @@ const BoardTask = ({
                     color: "white",
                   }}
                 />
-                <IconButton onClick={handleAddTask}>
+                <IconButton onClick={() => handleAddTask(status.id)}>
                   <AddIcon
                     sx={{
                       fill: "white",

@@ -55,6 +55,8 @@ const AuthForm = ({ type }) => {
     }
   }, [type]);
 
+  // console.log(country);
+
   const handleSubmit = async (event) => {
     setLoading(true);
     event.preventDefault();

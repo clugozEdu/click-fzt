@@ -15,6 +15,18 @@ import ListTask from "./components/lists-task";
 import CalendarTasks from "./components/calendar-task";
 import dayjs from "dayjs";
 
+// Nueva función para obtener el usuario por ID
+const fetchUserById = async (userId) => {
+  const { data, error } = await fetchSupabaseDB("table_users", "*", {
+    id: userId,
+  });
+  if (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+  return data[0];
+};
+
 const TaskPage = () => {
   const { advisorLogin } = useUser();
   const { listId } = useParams();
@@ -25,6 +37,7 @@ const TaskPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [changeBD, setChangeBD] = useState(false);
   const [saveIdStatus, setSaveIdStatus] = useState(0);
+  const [userName, setUserName] = useState(""); // Nuevo estado para el nombre del usuario
   const { setIsLoading } = useLoading();
   const [parent] = useAutoAnimate(); // Hook para animar el contenedor
   const [stateParent] = useAutoAnimate(); // Hook para animar el contenedor principal de los estados
@@ -49,17 +62,24 @@ const TaskPage = () => {
 
   // Función para manejar los eventos de la base de datos
   const handleEvent = useCallback(
-    (tableName, payload) => {
+    async (tableName, payload) => {
       console.log(`Received an event on ${tableName}:`, payload);
       loadTask();
       setChangeBD(true);
 
+      // Obtener el usuario que realizó el cambio
+      const user = await fetchUserById(payload.new?.user_id);
+      const userName = user
+        ? `${user.first_name} ${user.last_name}`
+        : "Alguien";
+      setUserName(userName);
+
       if (payload.eventType === "INSERT") {
-        setSnackbarMessage("creada exitosamente");
+        setSnackbarMessage("creado exitosamente");
       } else if (payload.eventType === "UPDATE") {
-        setSnackbarMessage("actualizada");
+        setSnackbarMessage("actualizado");
       } else if (payload.eventType === "DELETE") {
-        setSnackbarMessage("eliminada");
+        setSnackbarMessage("eliminado");
       }
     },
     [loadTask]
@@ -154,7 +174,7 @@ const TaskPage = () => {
       {showSnackbar && (
         <SnackbarCustom
           open={showSnackbar}
-          message={`${advisorLogin.fullname} ha ${snackbarMessage} una tarea`}
+          message={`${userName} ha ${snackbarMessage} una tarea`}
           title={"Completado"}
           onCloseHandler={() => {
             setShowSnackbar(false);
